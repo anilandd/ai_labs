@@ -79,7 +79,8 @@ def search(cur_state):
 
     return branch
 
-def dfs (depth):
+# function that run deapth first search
+def dfs (depth): 
     i = len(history) - 2 
     while i >= 0:
         new_branch = []
