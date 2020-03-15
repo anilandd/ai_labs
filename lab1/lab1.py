@@ -3,7 +3,6 @@ max_jar2 = 3
 goals = [[4,0],[4,3]]
 dead_end = [[0,0], [max_jar1,max_jar2]]
 cur_state = [0,0] # current state of jar1 and jar2
-# branch = [cur_state]
 history = [cur_state]
 
 def fill_j1(cur_state):
@@ -41,7 +40,7 @@ def from_j2_to_j1(cur_state):
 def util_add(cur_state, branch):
     if not(cur_state in branch) and not(cur_state in dead_end) and not(cur_state in history):
         branch.append(cur_state)
-        print(branch)
+        # print(branch)
         return cur_state
     else:
         return branch[-1]
@@ -78,24 +77,20 @@ def search(cur_state):
         if cur_state == rem:
             break
 
-    if branch != history:
-        print("new solution: ", branch)
-
     return branch
 
-def dfs ():
-    i = len(history) - 1 
+def dfs (depth):
+    i = len(history) - 2 
     while i >= 0:
         new_branch = []
         new_branch = search(history[i])
+        h1 = history[:i]
+        cur_depth = (len(h1) - 1) + len(new_branch)
+        if new_branch[-1] in goals and depth >= cur_depth:
+            print("Best solution found: ", h1, new_branch, " - ", depth, " steps found")
         i -= 1
 
     
 history = search(cur_state)
-print("Best solution found: ", history, " - ", len(history) - 1, " steps found")
-print("-------------------------------------------------------------------------------------------------------------")
-# branch = []
-# branch.append([2,3])
-# branch  = search(branch[0])
-dfs()
+dfs(6) 
 
