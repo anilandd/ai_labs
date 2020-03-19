@@ -82,7 +82,7 @@ def search(cur_state):
 # function that run deapth first search
 def dfs (depth): 
     i = len(history) - 2 
-    while i >= 0:
+    while i > 0:
         new_branch = []
         new_branch = search(history[i])
         h1 = history[:i]
@@ -95,6 +95,6 @@ def dfs (depth):
 
     
 history = search(cur_state)
-if not(dfs(5)):
+if not(dfs(6)):
     print("Solution can`t be found")
 
