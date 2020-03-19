@@ -89,9 +89,12 @@ def dfs (depth):
         cur_depth = (len(h1) - 1) + len(new_branch)
         if new_branch[-1] in goals and depth >= cur_depth:
             print("Best solution found: ", h1, new_branch, " - ", cur_depth, " steps")
+            return True
         i -= 1
+    return False
 
     
 history = search(cur_state)
-dfs(8) 
+if not(dfs(5)):
+    print("Solution can`t be found")
 
