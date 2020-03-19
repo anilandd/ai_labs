@@ -88,10 +88,10 @@ def dfs (depth):
         h1 = history[:i]
         cur_depth = (len(h1) - 1) + len(new_branch)
         if new_branch[-1] in goals and depth >= cur_depth:
-            print("Best solution found: ", h1, new_branch, " - ", depth, " steps found")
+            print("Best solution found: ", h1, new_branch, " - ", cur_depth, " steps")
         i -= 1
 
     
 history = search(cur_state)
-dfs(6) 
+dfs(8) 
 
