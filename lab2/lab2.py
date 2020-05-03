@@ -3,6 +3,8 @@ meaning = {0 : "lion", 1 : "fox", 2 : "goose", 3 : "corn"}
 goal = [True, True, True, True]
 bank = [False, False, False, False]
 
+var = [[0], [1], [2], [3], [2,3], [1,3]]    # possible movements in boat
+
 result = []
 
 def not_forbiden_chek(b, here):
@@ -42,28 +44,31 @@ def move(c, i, at):
 
 def RBFS(cur, pos):
     next_s = cur.copy()
-    # counter = 0
-    # while next_s != goal:
-    #     counter += 1
-    #     pos = not pos
-    #     next_s = trans_2(next_s, 1, 3, pos)
 
+    counter = 0
+    while next_s != goal:
+        for v in var:
+            counter += 1
+            pos = not pos
+            prev = next_s.copy()
+            next_s = move(next_s, v, pos)
+            if prev == next_s:
+                RBFS(next_s, pos)
 
-
-    # working secuence
-    pos = not pos
-    next_s = move(next_s, [1, 3], pos)
-    pos = not pos
-    pos = not pos
-    next_s = move(next_s, [0], pos)
-    pos = not pos
-    next_s = move(next_s, [1], pos)
-    pos = not pos
-    next_s = move(next_s, [2], pos)
-    pos = not pos
-    next_s = move(next_s, [3], pos)
-    pos = not pos
-    next_s = move(next_s, [1, 3], pos)
+    # # working secuence
+    # pos = not pos
+    # next_s = move(next_s, [1, 3], pos)
+    # pos = not pos
+    # pos = not pos
+    # next_s = move(next_s, [0], pos)
+    # pos = not pos
+    # next_s = move(next_s, [1], pos)
+    # pos = not pos
+    # next_s = move(next_s, [2], pos)
+    # pos = not pos
+    # next_s = move(next_s, [3], pos)
+    # pos = not pos
+    # next_s = move(next_s, [1, 3], pos)
 
 def driver():
     at_bank = False
