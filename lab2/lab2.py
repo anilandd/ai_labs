@@ -27,24 +27,25 @@ def not_forbiden_chek(b, here):
 
 
 def move(c, i, at):
-    new_c = c.copy()
+    old = c.copy()
     if at:
         direction = " from 1 to 2"
     else:
         direction = " from 2 to 1"
     if len(i) == 1 :
-        new_c[i[0]] = not new_c[i[0]]
+        old[i[0]] = not old[i[0]]
+        # iteration 2->1 fox : value change by itself result[1] to false
     else:
-        if new_c[i[0]] == new_c[i[1]]:
-            new_c[i[0]] = not new_c[i[0]]
-            new_c[i[1]] = not new_c[i[1]]
-    if not_forbiden_chek(new_c, at):
+        if old[i[0]] == old[i[1]]:
+            old[i[0]] = not old[i[0]]
+            old[i[1]] = not old[i[1]]
+    if not_forbiden_chek(old, at):
         if len(i) == 1 :
             print("\nRelocating ", meaning[i[0]], direction, "\n")
         else:
             print("\nRelocating ", meaning[i[0]], " and ", meaning[i[1]], direction, "\n")
-        result.append(new_c)
-        return new_c
+        result.append(old)
+        return old
     else:
         print("oops - can`t move", i, direction)
         return c
@@ -70,30 +71,47 @@ def is_ok(c, pos):
 
 def RBFS(cur, pos):
     next_s = cur.copy()
+
     counter = 0
-    for v in var:
-        counter += 1
-        pos = not pos
-        prev = next_s.copy()
-        next_s = move(next_s, v, pos)
-        if next_s == goal:
-            break
-        else:
+    while next_s != goal:
+    # while counter <= 40:
+        for v in var:
+            counter += 1
+            pos = not pos
+            prev = next_s.copy()
+            next_s = move(next_s, v, pos)
             if prev != next_s:
                 if is_ok(next_s, pos):
                     pos = not pos
                     print("Going back emptyhanded")
-                    continue          
+                    continue
+                # RBFS(next_s, pos)
+                
             else:
                 pos = not pos
-    print("\nResult:\n", result)
-    print("\nEveryone on the second bank!")
+        
+
+    # # working secuence
+    # pos = not pos
+    # next_s = move(next_s, [1, 3], pos)
+    # pos = not pos
+    # pos = not pos
+    # next_s = move(next_s, [0], pos)
+    # pos = not pos
+    # next_s = move(next_s, [1], pos)
+    # pos = not pos
+    # next_s = move(next_s, [2], pos)
+    # pos = not pos
+    # next_s = move(next_s, [3], pos)
+    # pos = not pos
+    # next_s = move(next_s, [1, 3], pos)
 
 def driver():
     at_bank = False
     print("\nRBFS")
     cur_state = bank    # initialising
     RBFS(cur_state, at_bank)
+    print("Result: ", result)
 
 driver()
 
