@@ -66,17 +66,18 @@ def is_ok(c, pos):
     else:
         return False
 
-
-
+def successor(cur):
+    if cur == goal:
+        return True
+    else:
+        return False
 
 def RBFS(cur, pos):
     next_s = cur.copy()
 
-    counter = 0
-    while next_s != goal:
-    # while counter <= 40:
+    # while next_s != goal:
+    if not successor(next_s):
         for v in var:
-            counter += 1
             pos = not pos
             prev = next_s.copy()
             next_s = move(next_s, v, pos)
@@ -85,10 +86,18 @@ def RBFS(cur, pos):
                     pos = not pos
                     print("\n! going back emptyhanded")
                     continue
-                # RBFS(next_s, pos)
-                
+                    # RBFS(next_s, pos)
+                RBFS(next_s, pos)
+                # break     
             else:
                 pos = not pos
+    else:
+        print("success")
+
+    # if successor(next_s):
+    #     print("Success!")
+    # else:
+    #     RBFS(next_s, at)
         
 
     # # working secuence
