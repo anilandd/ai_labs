@@ -12,13 +12,13 @@ def not_forbiden_chek(b, here):
     if not b in result:
         flag = not here
         if b[0] == flag and b[1] == flag:
-            print("! lion and fox can`t be both on one side")
+            print("\n-lion and fox can`t be both on one side")
             return False
         elif b[1] == flag and b[2] == flag:
-            print("! fox and goose can`t be both on one side")
+            print("\n-fox and goose can`t be both on one side")
             return False
         elif b[2] == flag and b[3] == flag:
-            print("! goose and corn can`t be both on one side")
+            print("\n-goose and corn can`t be both on one side")
             return False
         else:
             return True
@@ -27,27 +27,27 @@ def not_forbiden_chek(b, here):
 
 
 def move(c, i, at):
-    old = c.copy()
+    new_s = c.copy()
     if at:
         direction = " from 1 to 2"
     else:
         direction = " from 2 to 1"
     if len(i) == 1 :
-        old[i[0]] = not old[i[0]]
+        new_s[i[0]] = not new_s[i[0]]
         # iteration 2->1 fox : value change by itself result[1] to false
     else:
-        if old[i[0]] == old[i[1]]:
-            old[i[0]] = not old[i[0]]
-            old[i[1]] = not old[i[1]]
-    if not_forbiden_chek(old, at):
+        if new_s[i[0]] == new_s[i[1]]:
+            new_s[i[0]] = not new_s[i[0]]
+            new_s[i[1]] = not new_s[i[1]]
+    if not_forbiden_chek(new_s, at):
         if len(i) == 1 :
-            print("\nRelocating ", meaning[i[0]], direction, "\n")
+            print("\n! relocating ", meaning[i[0]], direction)
         else:
-            print("\nRelocating ", meaning[i[0]], " and ", meaning[i[1]], direction, "\n")
-        result.append(old)
-        return old
+            print("\n! relocating ", meaning[i[0]], " and ", meaning[i[1]], direction)
+        result.append(new_s)
+        return new_s
     else:
-        print("oops - can`t move", i, direction)
+        # print("\noops - can`t move", i, direction)
         return c
 
 def is_ok(c, pos):
@@ -83,7 +83,7 @@ def RBFS(cur, pos):
             if prev != next_s:
                 if is_ok(next_s, pos):
                     pos = not pos
-                    print("Going back emptyhanded")
+                    print("\n! going back emptyhanded")
                     continue
                 # RBFS(next_s, pos)
                 
