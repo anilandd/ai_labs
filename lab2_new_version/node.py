@@ -137,7 +137,11 @@ class Node:
 
     def canLeave(self):
         if self.farmer:
-            if self.lion == self.corn == True or self.lion == self.goose == True or self.fox == self.corn == True:
+            if self.lion == self.corn == True and self.fox == self.goose == False:
+                return True
+            elif self.lion == self.goose == True and self.fox == self.corn == False:
+                return True
+            elif self.fox == self.corn == True and self.lion == self.goose == False:
                 return True
             else:
                 return False
@@ -156,5 +160,4 @@ class Node:
         return (self.lion == other.lion and
                 self.fox == other.fox and
                 self.goose == other.goose and
-                self.corn == other.corn and
-                self.farmer == other.farmer)
+                self.corn == other.corn)
