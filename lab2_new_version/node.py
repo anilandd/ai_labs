@@ -8,16 +8,22 @@ class Node:
         self.corn = c
         self.farmer = farm
         self.parent = par
-        self.fVal = 0
+        self.fVal = self.countF()   # number of items at the first bank
+
+    def countF(self):
+        f_count = 0
+        if self.lion == False:
+            f_count +=1
+        if self.fox == False:
+            f_count +=1
+        if self.goose == False:
+            f_count +=1
+        if self.corn == False:
+            f_count +=1 
+        return f_count
 
     def move(self):
         states = []
-
-        # lion
-        print("\n? moving lion")
-        if self.lion == self.farmer and self.not_forbidden(self.moveLion()):
-            print("! moving lion")
-            states.append(self.moveLion())
 
         # fox
         print("\n? moving fox")
@@ -30,6 +36,12 @@ class Node:
         if self.goose == self.farmer and self.not_forbidden(self.moveGoose()):
             print("! moving goose")
             states.append(self.moveGoose())
+
+        # lion
+        print("\n? moving lion")
+        if self.lion == self.farmer and self.not_forbidden(self.moveLion()):
+            print("! moving lion")
+            states.append(self.moveLion())
 
         # corn
         print("\n? moving corn")
@@ -81,7 +93,7 @@ class Node:
             self.fox,
             self.goose,
             self.corn,
-            True,
+            not self.farmer,
             par = self
         )
 
