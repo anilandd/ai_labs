@@ -35,8 +35,8 @@ state_info(state(List, Boat), Knight, Squire, Num1, Num2) :-
 % проверка условия задачи
 check_loyalty([], []).
 check_loyalty([Head1|Tail1], [Head2|Tail2]) :-
- 	Head1 = Head2,
-	check_loyalty(Tail1, Tail2).
+    Head1 = Head2,
+    check_loyalty(Tail1, Tail2).
 % проверка возможности перевоза
 safe(state(List, Boat)) :-
     state_info(state(List, Boat), Knight, Squire, Y1, Y2),
@@ -62,8 +62,8 @@ write_list([Head|Tail]) :-
 write_state_lists([]).
 write_state_lists([state(Move, Boat)|LL]) :-
      write_state_lists(LL),
-     write("People: "), write_list(Move), write("   "),
-     write("Boat: "), write(Boat), nl.
+     write("People: "), write_list(Move), write("   "), nl, 
+     write("Boat: "), write(Boat), nl , nl.
 % убираем возможность циклов (не важно какой рыцарь поедет)
 % чтоб состояния были разные должно быть либо разное количество рыцаре либо оруженосцев
 not_state_member(_, []) :- true.
@@ -74,23 +74,23 @@ not_state_member(state(M1, B1), [state(M2, B2)|Tail]) :-
      ;   NumS1 =\= NumS2
      ;   B1 \== B2
      ), not_state_member(state(M1, B1), Tail).
-% начальное положение
+% начальное состояние
 init(state([left, left, left, left, left, left], left)).
-% целевое положение
+% целевое состояние
 goal(state([right, right, right, right, right, right], right)).
 % удаление дубликатов
-sift([], []).
-sift([Head|Tail1], [Head|Tail2]) :-
+delete_duplicate([], []).
+delete_duplicate([Head|Tail1], [Head|Tail2]) :-
      not_state_member(Head, Tail1), !,
-     sift(Tail1, Tail2).
-sift([_|Tail], List) :-
-     sift(Tail, List).
+     delete_duplicate(Tail1, Tail2).
+delete_duplicate([_|Tail], List) :-
+     delete_duplicate(Tail, List).
 % нахождение потомков
 extend([Head|Path], List) :-
      bagof( [X, Head | Path],
             (move(Head, X), not_state_member(X, [Head|Path])),
            RawList), !,
-     sift(RawList, List).
+     delete_duplicate(RawList, List).
 extend(_, []).
 solve(Start, Solution) :-
      breadthfirst([[Start]], Solution).
