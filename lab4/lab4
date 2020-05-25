@@ -1,0 +1,105 @@
+% соединение списков
+conc([], L, L).
+conc([H|L1], L2, [H|L3]) :-
+     conc(L1, L2, L3).
+% деление списка пополам
+divideList(List, List1, List2) :-
+    conc(List1, List2, List),
+    length(List1, X1),
+    length(List2, X2),
+    Y is X1 - X2,
+    abs(Y) =< 1, !.
+% изменение позиции
+% если меняется голова
+replace(X, Y, [X|Tail], [Y|Tail]).
+% после проверяется весь список
+replace(X, Y, [Head|Tail], [Head|List]) :-
+    replace(X, Y, Tail, List).
+% подсчет количества элементов в списке
+count(_, [], 0).
+count(X, [Y|Tail], N) :-
+     X = Y, !,
+     count(X, Tail, N1),
+     N is N1 + 1
+     ;
+     count(X, Tail, N).
+% разные стороны реки
+other_side(left, right).
+other_side(right, left).
+% подсчет количества рыцарей и оружиносцев на противоположном от лодки берегу берегах реки
+state_info(state(List, Boat), Knight, Squire, Num1, Num2) :-
+    divideList(List, Knight, Squire),
+    other_side(Boat, X),
+    count(X, Knight, Num1),
+    count(X, Squire, Num2).
+% проверка условия задачи
+check_loyalty([], []).
+check_loyalty([Head1|Tail1], [Head2|Tail2]) :-
+ 	Head1 = Head2,
+	check_loyalty(Tail1, Tail2).
+% проверка возможности перевоза
+safe(state(List, Boat)) :-
+    state_info(state(List, Boat), Knight, Squire, Y1, Y2),
+    (   check_loyalty(Knight, Squire)
+    ;   (   Y1 =:=0
+        ;   Y2 =:=0
+        )
+    ), !.
+% если с правого берега можно перевезти только одного человека то перевозим только одного(улучшение результата)
+move(state(List, right), state(Move, left)) :-
+     replace(right, left, List, Move),
+     safe(state(Move, left)), !.
+% иначе отправляем двух людей
+move(state(List, Boat), state(Move, NewBoat)) :- 
+     other_side(Boat, NewBoat),
+     replace(Boat, NewBoat, List, RawMove),
+     replace(Boat, NewBoat, RawMove, Move),
+     safe(state(Move, NewBoat)).
+% вывод
+write_list([]).
+write_list([Head|Tail]) :-
+     write(Head), write(" "), write_list(Tail).
+write_state_lists([]).
+write_state_lists([state(Move, Boat)|LL]) :-
+     write_state_lists(LL),
+     write("People: "), write_list(Move), write("   "),
+     write("Boat: "), write(Boat), nl.
+% убираем возможность циклов (не важно какой рыцарь поедет)
+% чтоб состояния были разные должно быть либо разное количество рыцаре либо оруженосцев
+not_state_member(_, []) :- true.
+not_state_member(state(M1, B1), [state(M2, B2)|Tail]) :-
+     state_info(state(M1, B1), _, _, NumK1, NumS1),
+     state_info(state(M2, B2), _, _, NumK2, NumS2),
+     (   NumK1 =\= NumK2
+     ;   NumS1 =\= NumS2
+     ;   B1 \== B2
+     ), not_state_member(state(M1, B1), Tail).
+% начальное положение
+init(state([left, left, left, left, left, left], left)).
+% целевое положение
+goal(state([right, right, right, right, right, right], right)).
+% удаление дубликатов
+sift([], []).
+sift([Head|Tail1], [Head|Tail2]) :-
+     not_state_member(Head, Tail1), !,
+     sift(Tail1, Tail2).
+sift([_|Tail], List) :-
+     sift(Tail, List).
+% нахождение потомков
+extend([Head|Path], List) :-
+     bagof( [X, Head | Path],
+            (move(Head, X), not_state_member(X, [Head|Path])),
+           RawList), !,
+     sift(RawList, List).
+extend(_, []).
+solve(Start, Solution) :-
+     breadthfirst([[Start]], Solution).
+breadthfirst([[Node| Path]|_], [Node|Path]) :-
+     goal(Node).
+breadthfirst([Path|Paths], Solution) :-
+     extend(Path, NewPaths),
+     conc(Paths, NewPaths, Paths1),
+     breadthfirst(Paths1, Solution).
+go() :- init(X),
+     solve(X, Y),
+     write_state_lists(Y).
