@@ -24,8 +24,8 @@ count(X, [Y|Tail], N) :-
      ;
      count(X, Tail, N).
 % разные стороны реки
-other_side(left, right).
-other_side(right, left).
+other_side(first, second).
+other_side(second, first).
 % подсчет количества рыцарей и оружиносцев на противоположном от лодки берегу берегах реки
 state_info(state(List, Boat), Knight, Squire, Num1, Num2) :-
     divideList(List, Knight, Squire),
@@ -46,9 +46,9 @@ safe(state(List, Boat)) :-
         )
     ), !.
 % если с правого берега можно перевезти только одного человека то перевозим только одного(улучшение результата)
-move(state(List, right), state(Move, left)) :-
-     replace(right, left, List, Move),
-     safe(state(Move, left)), !.
+move(state(List, second), state(Move, first)) :-
+     replace(second, first, List, Move),
+     safe(state(Move, first)), !.
 % иначе отправляем двух людей
 move(state(List, Boat), state(Move, NewBoat)) :- 
      other_side(Boat, NewBoat),
@@ -62,8 +62,8 @@ write_list([Head|Tail]) :-
 write_state_lists([]).
 write_state_lists([state(Move, Boat)|LL]) :-
      write_state_lists(LL),
-     write("People: "), write_list(Move), write("   "), nl, 
-     write("Boat: "), write(Boat), nl , nl.
+     write("People at bank: "), write_list(Move), write("   "), nl, 
+     write("Boat at bank: "), write(Boat), nl , nl.
 % убираем возможность циклов (не важно какой рыцарь поедет)
 % чтоб состояния были разные должно быть либо разное количество рыцаре либо оруженосцев
 not_state_member(_, []) :- true.
@@ -75,9 +75,9 @@ not_state_member(state(M1, B1), [state(M2, B2)|Tail]) :-
      ;   B1 \== B2
      ), not_state_member(state(M1, B1), Tail).
 % начальное состояние
-init(state([left, left, left, left, left, left], left)).
+init(state([first, first, first, first, first, first], first)).
 % целевое состояние
-goal(state([right, right, right, right, right, right], right)).
+goal(state([second, second, second, second, second, second], second)).
 % удаление дубликатов
 delete_duplicate([], []).
 delete_duplicate([Head|Tail1], [Head|Tail2]) :-
