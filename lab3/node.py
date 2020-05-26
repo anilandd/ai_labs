@@ -34,12 +34,22 @@ class Node:
     #     return bank2
 
 
+    # def countScore(self):
+    #     s = 0
+    #     for p in self.people:
+    #         if p == True:
+    #             s += 1
+    #     return s
+
     def countScore(self):
-        s = 0
-        for p in self.people:
-            if p == True:
-                s += 1
-        return s
+        score = 0
+        i = 0
+        while i < number_of_people:
+            j = i + 1
+            if self.people[i] == self.people[j] == True:
+                score += 1
+            i += 2
+        return score
 
 
     def move(self):

@@ -1,6 +1,6 @@
 def TABU(init_state, goal_state, path, tabu):
     
-    # path = []
+    # new_local_best = init_state
 
     if init_state == goal_state:
         print("\nGoal found!\n")
@@ -15,8 +15,6 @@ def TABU(init_state, goal_state, path, tabu):
         print("State:", init_state.people)
         if tabu:
             print("Tabu: ", len(tabu))
-            # for t in tabu:
-            #     print(t.people)
 
         possible = init_state.move()
 
@@ -28,14 +26,11 @@ def TABU(init_state, goal_state, path, tabu):
             j += 1
 
         local_best = selection(s_list, possible, tabu, path)
-        
+        if local_best == None:
+            local_best = new_local_best
         
         TABU(local_best, goal_state, path, tabu)
 
-        # else:
-        #     print("\n!new cicle")
-            
-        #     TABU(path[-1], goal_state, [path[:-1]], tabu)
 
 def selection(s_list, possible, tabu, path):
 
@@ -47,16 +42,20 @@ def selection(s_list, possible, tabu, path):
             print("max_score: ", possible_max_score)
             tabu.append(possible[next_state_index])
             path.append(possible[next_state_index])
+            global new_local_best
+            new_local_best = possible[next_state_index]
             return possible[next_state_index]
         else:
-            tabu.append(possible[next_state_index])
+            # tabu.append(possible[next_state_index])
             s_list.remove(s_list[next_state_index])
             possible.remove(possible[next_state_index])
             selection(s_list, possible, tabu, path)
     else:
-        print("\nnew cicle")
-        path = path[1:]
-        return path[1:]
+        print("\n\n!!! new cicle")
+        path.pop()
+        # global new_local_best
+        new_local_best = path[-1]
+        return path[-1]
 
 
 
