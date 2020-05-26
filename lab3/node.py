@@ -8,39 +8,30 @@ class Node:
     def __init__(self, people, boat, parent = None):
         self.people = people
         self.boat = boat
-        self.bank1 = self.onBank1()
-        self.bank2 = self.onBank2()
+        # self.bank1 = self.onBank1()
+        # self.bank2 = self.onBank2()
         self.parent = parent
         self.score = self.countScore()
-        # self.m1 = m1
-        # self.m2 = m2
-        # self.m3 = m3
-        # self.m4 = m4
-        # self.m5 = m5
-        # self.w1 = w1
-        # self.w2 = w2
-        # self.w3 = w3
-        # self.w4 = w4
-        # self.w5 = w5
-
-    def onBank1(self):
-        bank1 = []
-        p = 0
-        while p < len(self.people):
-            if self.people[p] == False:
-                bank1.append(p)
-            p += 1
-        return bank1
 
 
-    def onBank2(self):
-        bank2 = []
-        p = 0
-        while p < len(self.people):
-            if self.people[p] == True:
-                bank2.append(p)
-            p += 1
-        return bank2
+    # def onBank1(self):
+    #     bank1 = []
+    #     p = 0
+    #     while p < len(self.people):
+    #         if self.people[p] == False:
+    #             bank1.append(p)
+    #         p += 1
+    #     return bank1
+
+
+    # def onBank2(self):
+    #     bank2 = []
+    #     p = 0
+    #     while p < len(self.people):
+    #         if self.people[p] == True:
+    #             bank2.append(p)
+    #         p += 1
+    #     return bank2
 
 
     def countScore(self):
@@ -49,27 +40,6 @@ class Node:
             if p == True:
                 s += 1
         return s
-        # if self.m1 == True:
-        #     s += 1
-        # if self.m2 == True:
-        #     s += 1
-        # if self.m3 == True:
-        #     s += 1
-        # if self.m4 == True:
-        #     s += 1
-        # if self.m5 == True:
-        #     s += 1
-        # if self.w1 == True:
-        #     s += 1
-        # if self.w2 == True:
-        #     s += 1
-        # if self.w3 == True:
-        #     s += 1
-        # if self.w4 == True:
-        #     s += 1
-        # if self.w5 == True:
-        #     s += 1
-
 
 
     def move(self):
