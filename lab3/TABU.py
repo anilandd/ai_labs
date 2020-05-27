@@ -13,6 +13,7 @@ def TABU(init_state, goal_state, path, tabu):
     else:
         print("\n----------")
         print("State:", init_state.people)
+        print("Boat: ", init_state.boat)
         if tabu:
             print("Tabu: ", len(tabu))
 

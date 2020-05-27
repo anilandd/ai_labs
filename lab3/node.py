@@ -56,22 +56,32 @@ class Node:
 
         new_states = []
 
+        in_boat = 0
+
         i = 0
         while i < number_of_people:
             # generating moving of 1 person
             if self.boat == self.people[i] and self.is_not_forbidden(self.moveOnePerson(i)):
                 new_states.append(self.moveOnePerson(i))
+                in_boat += 1
                 j = 0
                 while j < number_of_people:
                     # generating moving of 2 persons
-                    if i != j and self.boat == self.people[j] and self.is_not_forbidden(self.moveTwoPersons(i, j)):
-                        new_states.append(self.moveTwoPersons(i, j))
-                        k = 0
-                        while k < number_of_people:
-                            # generating moving of 3 persons
-                            if i != k and j != k and self.boat == self.people[k] and self.is_not_forbidden(self.moveThreePersons(i, j, k)):
-                                new_states.append(self.moveThreePersons(i, j, k))
-                            k += 1
+                    if i != j and self.boat == self.people[j]:
+                        if self.is_not_forbidden(self.moveTwoPersons(i, j)):
+                            in_boat += 1
+                            new_states.append(self.moveTwoPersons(i, j))
+                            k = 0
+                            while k < number_of_people:
+                                # generating moving of 3 persons
+                                if i != k and j != k and self.boat == self.people[k] and self.is_not_forbidden(self.moveThreePersons(i, j, k)):
+                                    new_states.append(self.moveThreePersons(i, j, k))
+                                k += 1
+                        else:
+                            check_result = self.canBringPartnerWith(self.moveTwoPersons(i,j), i, j)
+                            if check_result[0]:
+                                new_states.append(self.moveThreePersons(i, j, check_result[1]))
+                                in_boat += 2
                     j += 1
             i += 1
 
@@ -93,6 +103,27 @@ class Node:
             else:
                 continue
         return True
+
+    def canBringPartnerWith(self, possible_state, p1, p2):
+        
+        result = []
+
+        flag = not possible_state.people[p1]
+
+        i = 0
+        while i < len(possible_state.people):
+            if i != p1 and i != p2 and possible_state.people[i] == flag:
+                if  self.is_not_forbidden(self.moveThreePersons(p1, p2, i)):
+                    result.append(True)
+                    result.append(i)
+                    return result
+            i += 1
+        result.append(False)
+        return result
+                
+            
+
+
     
 
     def moveOnePerson(self, person):
