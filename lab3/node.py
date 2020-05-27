@@ -56,33 +56,62 @@ class Node:
 
         new_states = []
 
-        in_boat = 0
-
+        # in_boat = 0
         i = 0
         while i < number_of_people:
             # generating moving of 1 person
-            if self.boat == self.people[i] and self.is_not_forbidden(self.moveOnePerson(i)):
-                new_states.append(self.moveOnePerson(i))
-                in_boat += 1
-                j = 0
-                while j < number_of_people:
-                    # generating moving of 2 persons
-                    if i != j and self.boat == self.people[j]:
-                        if self.is_not_forbidden(self.moveTwoPersons(i, j)):
-                            in_boat += 1
-                            new_states.append(self.moveTwoPersons(i, j))
-                            k = 0
-                            while k < number_of_people:
-                                # generating moving of 3 persons
-                                if i != k and j != k and self.boat == self.people[k] and self.is_not_forbidden(self.moveThreePersons(i, j, k)):
-                                    new_states.append(self.moveThreePersons(i, j, k))
-                                k += 1
-                        else:
-                            check_result = self.canBringPartnerWith(self.moveTwoPersons(i,j), i, j)
-                            if check_result[0]:
-                                new_states.append(self.moveThreePersons(i, j, check_result[1]))
-                                in_boat += 2
-                    j += 1
+            if self.boat == self.people[i]:
+                if self.is_not_forbidden(self.moveOnePerson(i)):
+                    new_states.append(self.moveOnePerson(i))
+                    # in_boat += 1
+                    j = 0
+                    while j < number_of_people:
+                        # generating moving of 2 persons
+                        if i != j and self.boat == self.people[j]:
+                            if self.is_not_forbidden(self.moveTwoPersons(i, j)):
+                                # in_boat += 1
+                                new_states.append(self.moveTwoPersons(i, j))
+                                k = 0
+                                while k < number_of_people:
+                                    # generating moving of 3 persons
+                                    if i != k and j != k and self.boat == self.people[k] and self.is_not_forbidden(self.moveThreePersons(i, j, k)):
+                                        new_states.append(self.moveThreePersons(i, j, k))
+                                    k += 1
+                            else:
+                                check_result = self.canBringPartnerWith2(self.moveTwoPersons(i,j), i, j)
+                                if check_result[0]:
+                                    for n in check_result[1]:
+                                        new_states.append(self.moveThreePersons(i, j, n))
+                                        # in_boat += 2
+                        j += 1
+                else:
+                    check_result = self.canBringPartnerWith1(self.moveOnePerson(i), i)
+                    if check_result[0]:
+                        for n in check_result[1]:
+                            new_states.append(self.moveTwoPersons(i, n))
+                            # in_boat += 2
+
+                        j = 0
+                        while j < number_of_people:
+                            # generating moving of 2 persons
+                            if i != j and self.boat == self.people[j]:
+                                if self.is_not_forbidden(self.moveTwoPersons(i, j)):
+                                    # in_boat += 1
+                                    new_states.append(self.moveTwoPersons(i, j))
+                                    k = 0
+                                    while k < number_of_people:
+                                        # generating moving of 3 persons
+                                        if i != k and j != k and self.boat == self.people[k] and self.is_not_forbidden(self.moveThreePersons(i, j, k)):
+                                            new_states.append(self.moveThreePersons(i, j, k))
+                                        k += 1
+                                else:
+                                    check_result = self.canBringPartnerWith2(self.moveTwoPersons(i,j), i, j)
+                                    if check_result[0]:
+                                        for n in check_result[1]:
+                                            new_states.append(self.moveThreePersons(i, j, n))
+                                            # in_boat += 2
+                            j += 1
+
             i += 1
 
         return new_states
@@ -104,8 +133,10 @@ class Node:
                 continue
         return True
 
-    def canBringPartnerWith(self, possible_state, p1, p2):
+    def canBringPartnerWith2(self, possible_state, p1, p2):
         
+        res = []
+        ok_indexes = []
         result = []
 
         flag = not possible_state.people[p1]
@@ -114,15 +145,49 @@ class Node:
         while i < len(possible_state.people):
             if i != p1 and i != p2 and possible_state.people[i] == flag:
                 if  self.is_not_forbidden(self.moveThreePersons(p1, p2, i)):
-                    result.append(True)
-                    result.append(i)
-                    return result
+                    if len(res) == 1:
+                        res[0] = True
+                    else:
+                        res.append(True)
+                    ok_indexes.append(i)
+                    # return result
             i += 1
-        result.append(False)
+
+        if not res:
+            res.append(False)
+
+        result.append(res)
+        result.append(ok_indexes) 
         return result
                 
             
+    def canBringPartnerWith1(self, possible_state, p1):
+        
+        res = []
+        ok_indexes = []
+        result = []
 
+        flag = not possible_state.people[p1]
+
+        i = 0
+        while i < len(possible_state.people):
+            if i != p1 and possible_state.people[i] == flag:
+                if  self.is_not_forbidden(self.moveTwoPersons(p1, i)):
+                    if len(res) == 1:
+                        res[0] = True
+                    else:
+                        res.append(True)
+                    ok_indexes.append(i)
+                    # return result
+            i += 1
+
+        if not res:
+            res.append(False)
+
+        result.append(res)
+        result.append(ok_indexes) 
+
+        return result
 
     
 
@@ -156,195 +221,9 @@ class Node:
             parent = self
         )
 
-
-
-
-
-
-
-
-    # def move1(self):
-
-    #     new_states = []
-
-    #     in_boat = 0
-
-    #     # if self.boat:
-    #     #     for p in self.bank2:
-    #     #         new_states.append(self.moveM1())
-    #     # else:
-    #     #     for p in self.bank1:
-    #     #         new_states.append(self.moveM1())
-
-    #     # for p in self.people:
-    #     #     if p == self.boat:
-
-    #     if self.boat == self.people[0] and self.is_not_forbidden(self.moveM1(not self.boat)):
-    #         new_states.append(self.moveM1(not self.boat))
-    #     if self.boat == self.people[1] and self.is_not_forbidden(self.moveW1(not self.boat)):
-    #         new_states.append(self.moveW1(not self.boat))
-    #     if self.boat == self.people[2] and self.is_not_forbidden(self.moveM2(not self.boat)):
-    #         new_states.append(self.moveM2(not self.boat))
-    #     if self.boat == self.people[3] and self.is_not_forbidden(self.moveW2(not self.boat)):
-    #         new_states.append(self.moveW2(not self.boat))
-    #     if self.boat == self.people[4] and self.is_not_forbidden(self.moveM3(not self.boat)):
-    #         new_states.append(self.moveM3(not self.boat))
-    #     if self.boat == self.people[5] and self.is_not_forbidden(self.moveW3(not self.boat)):
-    #         new_states.append(self.moveW3(not self.boat))
-    #     if self.boat == self.people[6] and self.is_not_forbidden(self.moveM4(not self.boat)):
-    #         new_states.append(self.moveM4(not self.boat))
-    #     if self.boat == self.people[7] and self.is_not_forbidden(self.moveW4(not self.boat)):
-    #         new_states.append(self.moveW4(not self.boat))
-    #     if self.boat == self.people[8] and self.is_not_forbidden(self.moveM5(not self.boat)):
-    #         new_states.append(self.moveM5(not self.boat))
-    #     if self.boat == self.people[9] and self.is_not_forbidden(self.moveW5(not self.boat)):
-    #         new_states.append(self.moveW5(not self.boat))
-
-    #     # if self.boat == self.people[0] and self.is_not_forbidden(self.moveM1(not self.boat)) and not (self.moveM1(not self.boat) in new_states):
-    #     #     new_states.append(self.moveM1(not self.boat))
-    #     # if self.boat == self.people[1] and self.is_not_forbidden(self.moveW1(not self.boat)) and not (self.moveW1(not self.boat) in new_states):
-    #     #     new_states.append(self.moveW1(not self.boat))
-    #     # if self.boat == self.people[2] and self.is_not_forbidden(self.moveM2(not self.boat)) and not (self.moveM2(not self.boat) in new_states):
-    #     #     new_states.append(self.moveM2(not self.boat))
-    #     # if self.boat == self.people[3] and self.is_not_forbidden(self.moveW2(not self.boat)) and not (self.moveW2(not self.boat) in new_states):
-    #     #     new_states.append(self.moveW2(not self.boat))
-    #     # if self.boat == self.people[4] and self.is_not_forbidden(self.moveM3(not self.boat)) and not (self.moveM3(not self.boat) in new_states):
-    #     #     new_states.append(self.moveM3(not self.boat))
-    #     # if self.boat == self.people[5] and self.is_not_forbidden(self.moveW3(not self.boat)) and not (self.moveW3(not self.boat) in new_states):
-    #     #     new_states.append(self.moveW3(not self.boat))
-    #     # if self.boat == self.people[6] and self.is_not_forbidden(self.moveM4(not self.boat)) and not (self.moveM4(not self.boat) in new_states):
-    #     #     new_states.append(self.moveM4(not self.boat))
-    #     # if self.boat == self.people[7] and self.is_not_forbidden(self.moveW4(not self.boat)) and not (self.moveW4(not self.boat) in new_states):
-    #     #     new_states.append(self.moveW4(not self.boat))
-    #     # if self.boat == self.people[8] and self.is_not_forbidden(self.moveM5(not self.boat)) and not (self.moveM5(not self.boat) in new_states):
-    #     #     new_states.append(self.moveM5(not self.boat))
-    #     # if self.boat == self.people[9] and self.is_not_forbidden(self.moveW5(not self.boat)) and not (self.moveW5(not self.boat) in new_states):
-    #     #     new_states.append(self.moveW5(not self.boat))
-
-    #     # while in_boat < boat_capacity:
-
-
-
-    #     # if self.boat == self.people[0]:
-    #     #     new_states.append(self.moveM1())
-
-    #     # if self.boat == self.people[2]:
-    #     #     new_states.append(self.moveM2())
-
-    #     # if self.boat == self.people[4]:
-    #     #     new_states.append(self.moveM3())
-
-    #     return new_states1
-
-
-
-
-    # def moveM1(self, b):
-    #     return Node(
-    #         [not self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-
-    # def moveM2(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         not self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveM3(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         not self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveM4(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         not self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveM5(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         not self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-
-    # def moveW1(self, b):
-    #     return Node(
-    #         [self.people[0], not self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-
-    # def moveW2(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], not self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveW3(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], not self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveW4(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], not self.people[7], 
-    #         self.people[8], self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
-    
-    # def moveW5(self, b):
-    #     return Node(
-    #         [self.people[0], self.people[1], 
-    #         self.people[2], self.people[3], 
-    #         self.people[4], self.people[5], 
-    #         self.people[6], self.people[7], 
-    #         self.people[8], not self.people[9]],
-    #         boat = b,
-    #         parent = self
-    #     )
+    def __eq__(self, other):
+        if other:
+            return (self.people == other.people and
+                    self.boat == other.boat)
+        else:
+            return False

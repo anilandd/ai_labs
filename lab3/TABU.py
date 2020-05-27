@@ -1,6 +1,5 @@
 def TABU(init_state, goal_state, path, tabu):
     
-    # new_local_best = init_state
 
     if init_state == goal_state:
         print("\nGoal found!\n")
@@ -14,6 +13,8 @@ def TABU(init_state, goal_state, path, tabu):
         print("\n----------")
         print("State:", init_state.people)
         print("Boat: ", init_state.boat)
+        print("Path level: ", len(path)-1)
+
         if tabu:
             print("Tabu: ", len(tabu))
 
@@ -30,6 +31,7 @@ def TABU(init_state, goal_state, path, tabu):
         if local_best == None:
             local_best = new_local_best
         
+        print("width: ", len(s_list))
         TABU(local_best, goal_state, path, tabu)
 
 
@@ -45,6 +47,8 @@ def selection(s_list, possible, tabu, path):
             path.append(possible[next_state_index])
             global new_local_best
             new_local_best = possible[next_state_index]
+            # global width
+
             return possible[next_state_index]
         else:
             # tabu.append(possible[next_state_index])
@@ -53,10 +57,14 @@ def selection(s_list, possible, tabu, path):
             selection(s_list, possible, tabu, path)
     else:
         print("\n\n!!! new cicle")
-        path.pop()
+        if not len(path) == 1:
+            path.pop()
+            new_local_best = path[-1]
+            return path[-1]
         # global new_local_best
-        new_local_best = path[-1]
-        return path[-1]
+        else:
+            new_local_best = path[-1]
+            return path[-1]
 
 
 
@@ -68,17 +76,3 @@ def tabu_check(best, tabu):
     return True
 
 
-        # if tabu:
-        #     i = 0 
-        #     while i < len(possible):
-        #         for t in tabu:
-        #             # print("i - ", i, " len - ", len(possible))
-        #             if possible[i].people == t.people:
-        #                 if possible[i].boat == t.boat:
-        #                     possible.remove(possible[i])
-        #                     if len(possible) == i:
-        #                         break
-        #                     else:
-        #                         continue
-        #         # print("\n")
-        #         i += 1
